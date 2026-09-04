@@ -150,6 +150,7 @@ export default function BookmarkDetailScreen() {
           return (
             <Pressable
               key={cat}
+              testID={`recategorize-${cat}`}
               onPress={() => handleCategoryChange(cat)}
               style={[
                 styles.categoryOption,

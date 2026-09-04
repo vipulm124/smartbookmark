@@ -13,6 +13,7 @@ import { BookmarkCard } from "../src/components/BookmarkCard";
 import { CategoryFilter } from "../src/components/CategoryFilter";
 import { EmptyState } from "../src/components/EmptyState";
 import { colors, spacing } from "../src/constants/theme";
+import { seedDemoBookmarks } from "../src/services/demoData";
 import { getAllBookmarks, getBookmarkCounts } from "../src/services/storage";
 import { Bookmark, BookmarkCategory } from "../src/types/bookmark";
 
@@ -100,7 +101,15 @@ export default function HomeScreen() {
           styles.list,
           filteredBookmarks.length === 0 && styles.listEmpty,
         ]}
-        ListEmptyComponent={<EmptyState filter={filter} />}
+        ListEmptyComponent={
+          <EmptyState
+            filter={filter}
+            onLoadDemo={async () => {
+              await seedDemoBookmarks();
+              await loadBookmarks();
+            }}
+          />
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

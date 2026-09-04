@@ -49,6 +49,7 @@ export function CategoryFilter({
         return (
           <Pressable
             key={filter.key}
+            testID={`filter-${filter.key}`}
             onPress={() => onSelect(filter.key)}
             style={[
               styles.chip,

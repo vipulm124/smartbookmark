@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, spacing } from "../constants/theme";
 
 interface EmptyStateProps {
   filter: string;
+  onLoadDemo?: () => void;
 }
 
-export function EmptyState({ filter }: EmptyStateProps) {
+export function EmptyState({ filter, onLoadDemo }: EmptyStateProps) {
   return (
     <View style={styles.container}>
       <View style={styles.iconCircle}>
@@ -23,6 +24,13 @@ export function EmptyState({ filter }: EmptyStateProps) {
         <Step number={2} text='Tap Share and choose "Smart Bookmark"' />
         <Step number={3} text="We auto-sort into Technical, Fun, or Other" />
       </View>
+
+      {onLoadDemo && filter === "all" && (
+        <Pressable style={styles.demoButton} onPress={onLoadDemo} testID="load-demo">
+          <Ionicons name="sparkles" size={18} color={colors.text} />
+          <Text style={styles.demoButtonText}>Load demo bookmarks</Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -99,5 +107,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     lineHeight: 18,
+  },
+  demoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: 12,
+    marginTop: spacing.lg,
+  },
+  demoButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.text,
   },
 });
