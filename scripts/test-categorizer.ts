@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {
   categorizeContent,
   detectContentType,
-  processSharePayload,
+  processSharePayloadRules,
 } from "../src/services/categorizer";
 
 function test(name: string, fn: () => void) {
@@ -45,7 +45,7 @@ test("detects Stack Overflow as technical", () => {
 });
 
 test("processes share payload with URL in text", () => {
-  const result = processSharePayload({
+  const result = processSharePayloadRules({
     text: "Check this out https://dev.to/some/article about TypeScript",
   });
   assert.equal(result.category, "technical");

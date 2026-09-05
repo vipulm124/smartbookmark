@@ -3,6 +3,7 @@ import {
   ContentType,
   SharePayload,
 } from "../types/bookmark";
+import { categorizeWithAI } from "./aiCategorizer";
 
 const TECHNICAL_DOMAINS = [
   "github.com",
@@ -339,7 +340,7 @@ export function extractTags(
   return Array.from(tags);
 }
 
-export function processSharePayload(payload: SharePayload): {
+export function processSharePayloadRules(payload: SharePayload): {
   url: string;
   title: string;
   description: string;
@@ -360,4 +361,42 @@ export function processSharePayload(payload: SharePayload): {
   const tags = extractTags(url, title, category, contentType);
 
   return { url, title, description, category, contentType, tags };
+}
+
+export async function processSharePayload(payload: SharePayload): Promise<{
+  url: string;
+  title: string;
+  description: string;
+  category: BookmarkCategory;
+  contentType: ContentType;
+  tags: string[];
+  categorizedBy: "ai" | "rules";
+}> {
+  const base = processSharePayloadRules(payload);
+  const aiResult = await categorizeWithAI({
+    url: base.url,
+    title: base.title,
+    description: base.description,
+  });
+
+  if (!aiResult) {
+    return { ...base, categorizedBy: "rules" };
+  }
+
+  const description = aiResult.summary || base.description;
+  const tags = extractTags(
+    base.url,
+    base.title,
+    aiResult.category,
+    aiResult.contentType
+  );
+
+  return {
+    ...base,
+    category: aiResult.category,
+    contentType: aiResult.contentType,
+    description,
+    tags,
+    categorizedBy: "ai",
+  };
 }

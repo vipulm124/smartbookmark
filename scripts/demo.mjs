@@ -52,25 +52,9 @@ async function main() {
     fullPage: true,
   });
 
-  await page.getByTestId("recategorize-entertainment").click();
-  await wait(800);
-  await page.screenshot({
-    path: path.join(ARTIFACTS, "screenshot_recategorize.png"),
-    fullPage: true,
-  });
-
-  await page.goBack();
-  await wait(800);
-  await page.getByTestId("filter-entertainment").click();
-  await wait(1000);
-  await page.screenshot({
-    path: path.join(ARTIFACTS, "screenshot_after_recategorize.png"),
-    fullPage: true,
-  });
-
   await context.close();
   await browser.close();
-  console.log("Demo screenshots and video saved to", ARTIFACTS);
+  console.log("Demo screenshots saved to", ARTIFACTS);
 }
 
 main().catch((err) => {

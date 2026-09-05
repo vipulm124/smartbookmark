@@ -55,7 +55,7 @@ export function ProcessingOverlay({
           </View>
         )}
 
-        <Text style={styles.hint}>Analyzing content and sorting…</Text>
+        <Text style={styles.hint}>AI is analyzing and sorting your bookmark…</Text>
       </View>
     </View>
   );

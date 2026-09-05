@@ -74,7 +74,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.greeting}>Smart Bookmark</Text>
           <Text style={styles.subtitle}>
-            Share from any app — we sort it for you
+            Share from any app — AI sorts it for you
           </Text>
         </View>
         <View style={styles.logoBadge}>

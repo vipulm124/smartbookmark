@@ -22,7 +22,7 @@ export function EmptyState({ filter, onLoadDemo }: EmptyStateProps) {
       <View style={styles.steps}>
         <Step number={1} text="Open any app (Instagram, YouTube, Chrome…)" />
         <Step number={2} text='Tap Share and choose "Smart Bookmark"' />
-        <Step number={3} text="We auto-sort into Technical, Fun, or Other" />
+        <Step number={3} text="AI auto-sorts into Technical, Fun, or Other" />
       </View>
 
       {onLoadDemo && filter === "all" && (

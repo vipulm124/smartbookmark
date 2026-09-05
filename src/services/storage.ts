@@ -104,17 +104,6 @@ export async function deleteBookmark(id: string): Promise<void> {
   await database.runAsync("DELETE FROM bookmarks WHERE id = ?", [id]);
 }
 
-export async function updateBookmarkCategory(
-  id: string,
-  category: BookmarkCategory
-): Promise<void> {
-  const database = await getDb();
-  await database.runAsync(
-    "UPDATE bookmarks SET category = ? WHERE id = ?",
-    [category, id]
-  );
-}
-
 export async function getBookmarkCounts(): Promise<
   Record<BookmarkCategory, number> & { total: number }
 > {

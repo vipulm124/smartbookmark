@@ -16,18 +16,8 @@ import {
   CONTENT_TYPE_CONFIG,
 } from "../../src/constants/categories";
 import { colors, radius, spacing } from "../../src/constants/theme";
-import {
-  deleteBookmark,
-  getBookmarkById,
-  updateBookmarkCategory,
-} from "../../src/services/storage";
-import { Bookmark, BookmarkCategory } from "../../src/types/bookmark";
-
-const CATEGORIES: BookmarkCategory[] = [
-  "technical",
-  "entertainment",
-  "other",
-];
+import { deleteBookmark, getBookmarkById } from "../../src/services/storage";
+import { Bookmark } from "../../src/types/bookmark";
 
 export default function BookmarkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -51,12 +41,6 @@ export default function BookmarkDetailScreen() {
     } catch {
       Linking.openURL(bookmark.url);
     }
-  };
-
-  const handleCategoryChange = async (category: BookmarkCategory) => {
-    if (!bookmark) return;
-    await updateBookmarkCategory(bookmark.id, category);
-    setBookmark({ ...bookmark, category });
   };
 
   const handleDelete = () => {
@@ -140,42 +124,6 @@ export default function BookmarkDetailScreen() {
           label="Saved"
           value={new Date(bookmark.createdAt).toLocaleString()}
         />
-      </View>
-
-      <Text style={styles.sectionTitle}>Recategorize</Text>
-      <View style={styles.categoryPicker}>
-        {CATEGORIES.map((cat) => {
-          const config = CATEGORY_CONFIG[cat];
-          const isActive = bookmark.category === cat;
-          return (
-            <Pressable
-              key={cat}
-              testID={`recategorize-${cat}`}
-              onPress={() => handleCategoryChange(cat)}
-              style={[
-                styles.categoryOption,
-                isActive && {
-                  borderColor: config.color,
-                  backgroundColor: config.bgColor + "60",
-                },
-              ]}
-            >
-              <Ionicons
-                name={config.icon as keyof typeof Ionicons.glyphMap}
-                size={20}
-                color={isActive ? config.color : colors.textSecondary}
-              />
-              <Text
-                style={[
-                  styles.categoryOptionText,
-                  isActive && { color: config.color },
-                ]}
-              >
-                {config.label}
-              </Text>
-            </Pressable>
-          );
-        })}
       </View>
 
       {bookmark.url && (
@@ -313,34 +261,6 @@ const styles = StyleSheet.create({
   metaValue: {
     flex: 1,
     fontSize: 13,
-    color: colors.textSecondary,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  categoryPicker: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  categoryOption: {
-    flex: 1,
-    alignItems: "center",
-    gap: spacing.xs,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: colors.border + "40",
-  },
-  categoryOptionText: {
-    fontSize: 12,
-    fontWeight: "600",
     color: colors.textSecondary,
   },
   openButton: {

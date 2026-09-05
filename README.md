@@ -1,13 +1,14 @@
 # Smart Bookmark
 
-A mobile app that receives shared links from any app (Instagram, YouTube, Chrome, etc.) and automatically sorts them into **Technical**, **Entertainment**, or **Other** categories.
+A mobile app that receives shared links from any app (Instagram, YouTube, Chrome, etc.) and uses **AI** to automatically sort them into **Technical**, **Entertainment**, or **Other** categories.
 
 ## Features
 
 - **Share from any app** — appears in the system Share sheet on iOS and Android
-- **Smart categorization** — analyzes URLs, domains, and text to auto-sort bookmarks
+- **AI categorization** — OpenAI analyzes shared content and picks the right category
+- **Smart fallback** — rule-based classifier runs automatically when no API key is set
 - **Content type detection** — identifies articles, videos, reels, social posts, and images
-- **Manual override** — recategorize any bookmark from the detail screen
+- **Category filters** — browse all bookmarks or filter by category
 - **Offline-first** — all bookmarks stored locally with SQLite
 
 ## How it works
@@ -15,7 +16,17 @@ A mobile app that receives shared links from any app (Instagram, YouTube, Chrome
 1. Open any app (Instagram, YouTube, Safari, Chrome, etc.)
 2. Tap **Share** on a post, reel, video, or article
 3. Select **Smart Bookmark** from the share sheet
-4. The app analyzes the content and saves it to the right category
+4. AI analyzes the content and saves it to the right category automatically
+
+## AI setup
+
+Create a `.env` file (see `.env.example`):
+
+```bash
+EXPO_PUBLIC_OPENAI_API_KEY=sk-your-key-here
+```
+
+The app uses `gpt-4o-mini` for fast, low-cost categorization. Without an API key, it falls back to the built-in rule-based classifier.
 
 ## Tech stack
 
@@ -23,68 +34,65 @@ A mobile app that receives shared links from any app (Instagram, YouTube, Chrome
 - **Expo Router** for navigation
 - **expo-share-intent** for receiving shares from other apps
 - **expo-sqlite** for local storage
-- Rule-based categorization engine (domain + keyword analysis)
+- **OpenAI API** for AI categorization with rules-based fallback
 
 ## Getting started
 
 ### Prerequisites
 
 - Node.js 18+
-- For device testing: [Expo Go](https://expo.dev/go) won't work for share intents — you need a **development build**
+- OpenAI API key (recommended for best categorization)
+- For device testing: a **development build** (Expo Go does not support share intents)
 
 ### Install
 
 ```bash
 npm install
+cp .env.example .env   # add your OpenAI API key
 ```
 
 ### Run (development build required for share intent)
 
-Share intents require native code. Build and run on a device:
+```bash
+npx expo prebuild
+npx expo run:android   # or run:ios on macOS
+```
+
+### Web preview (UI only)
 
 ```bash
-# Generate native projects
-npx expo prebuild
-
-# Run on Android
-npx expo run:android
-
-# Run on iOS (macOS required)
-npx expo run:ios
+npx expo start --web
+# Click "Load demo bookmarks" on the home screen
 ```
 
 ### Run tests
 
 ```bash
-node scripts/test-categorizer.mjs
+npm test
 npm run lint
 ```
 
 ## Categorization logic
 
-| Signal | Examples |
-|--------|----------|
-| **Technical** | github.com, stackoverflow.com, dev.to, docs sites, programming keywords |
-| **Entertainment** | youtube.com, instagram.com/reel, tiktok.com, memes, music, gaming |
-| **Other** | Everything else |
+| Method | When used |
+|--------|-----------|
+| **AI (OpenAI)** | When `EXPO_PUBLIC_OPENAI_API_KEY` is set |
+| **Rules fallback** | No API key, or if the AI request fails |
 
-Content types are detected separately: `article`, `video`, `reel`, `social`, `image`, `other`.
+AI considers the URL, title, and description to classify into Technical, Entertainment, or Other.
 
 ## Project structure
 
 ```
 app/                  # Expo Router screens
   index.tsx           # Home — bookmark list with category filters
-  shareintent.tsx     # Handles incoming shares
-  bookmark/[id].tsx   # Bookmark detail + recategorize
+  shareintent.tsx     # Handles incoming shares + AI categorization
+  bookmark/[id].tsx   # Bookmark detail view
 src/
-  components/         # UI components
-  constants/          # Theme and category config
   services/
-    categorizer.ts    # Smart sorting engine
+    aiCategorizer.ts  # OpenAI-powered classifier
+    categorizer.ts    # Rules fallback + share processing
     storage.ts        # SQLite persistence
-    shareParser.ts    # Parse share intent payloads
-  types/              # TypeScript types
 ```
 
 ## Building for production

@@ -47,18 +47,6 @@ export async function deleteBookmark(id: string): Promise<void> {
   await writeAll(bookmarks.filter((b) => b.id !== id));
 }
 
-export async function updateBookmarkCategory(
-  id: string,
-  category: BookmarkCategory
-): Promise<void> {
-  const bookmarks = await readAll();
-  const index = bookmarks.findIndex((b) => b.id === id);
-  if (index >= 0) {
-    bookmarks[index] = { ...bookmarks[index], category };
-    await writeAll(bookmarks);
-  }
-}
-
 export async function getBookmarkCounts(): Promise<
   Record<BookmarkCategory, number> & { total: number }
 > {

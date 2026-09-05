@@ -29,13 +29,11 @@ export default function ShareIntentScreen() {
 
       try {
         const payload = parseShareIntent(shareIntent);
-        const processed = processSharePayload(payload);
+        const processed = await processSharePayload(payload);
         const sourceApp = formatSourceApp(payload.sourceApp);
 
         setPreviewTitle(processed.title);
         setPreviewCategory(processed.category);
-
-        await new Promise((resolve) => setTimeout(resolve, 600));
 
         await saveBookmark({
           url: processed.url,
@@ -52,9 +50,11 @@ export default function ShareIntentScreen() {
         resetShareIntent();
 
         const categoryLabel = CATEGORY_CONFIG[processed.category].label;
+        const methodLabel =
+          processed.categorizedBy === "ai" ? "AI sorted" : "Auto-sorted";
         Alert.alert(
           "Bookmark saved!",
-          `Sorted into ${categoryLabel}`,
+          `${methodLabel} into ${categoryLabel}`,
           [
             {
               text: "View bookmarks",
