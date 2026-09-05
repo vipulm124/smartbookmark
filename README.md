@@ -20,13 +20,27 @@ A mobile app that receives shared links from any app (Instagram, YouTube, Chrome
 
 ## AI setup
 
+The app supports multiple AI providers. It auto-detects the first configured key, preferring cheaper options:
+
+| Provider | Default model | Cost | Get a key |
+|----------|--------------|------|-----------|
+| **Groq** (recommended) | `llama-3.1-8b-instant` | Free tier available | [console.groq.com](https://console.groq.com/keys) |
+| **Google Gemini** | `gemini-2.0-flash-lite` | ~$0.075/1M tokens | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| **OpenRouter** | `google/gemma-2-9b-it:free` | Free models available | [openrouter.ai](https://openrouter.ai/keys) |
+| **OpenAI** | `gpt-4o-mini` | ~$0.15/1M tokens | [platform.openai.com](https://platform.openai.com/api-keys) |
+
 Create a `.env` file (see `.env.example`):
 
 ```bash
-EXPO_PUBLIC_OPENAI_API_KEY=sk-your-key-here
+# Easiest — Groq free tier with a small Llama model
+EXPO_PUBLIC_GROQ_API_KEY=gsk_your-key-here
+
+# Or force a specific provider:
+# EXPO_PUBLIC_AI_PROVIDER=gemini
+# EXPO_PUBLIC_GEMINI_API_KEY=your-key-here
 ```
 
-The app uses `gpt-4o-mini` for fast, low-cost categorization. Without an API key, it falls back to the built-in rule-based classifier.
+Without any API key, the app falls back to the built-in rule-based classifier.
 
 ## Tech stack
 
@@ -34,7 +48,7 @@ The app uses `gpt-4o-mini` for fast, low-cost categorization. Without an API key
 - **Expo Router** for navigation
 - **expo-share-intent** for receiving shares from other apps
 - **expo-sqlite** for local storage
-- **OpenAI API** for AI categorization with rules-based fallback
+- **OpenAI API** (or Groq / Gemini / OpenRouter) for AI categorization with rules-based fallback
 
 ## Getting started
 
@@ -76,7 +90,7 @@ npm run lint
 
 | Method | When used |
 |--------|-----------|
-| **AI (OpenAI)** | When `EXPO_PUBLIC_OPENAI_API_KEY` is set |
+| **AI** (Groq, Gemini, OpenRouter, or OpenAI) | When any provider API key is set |
 | **Rules fallback** | No API key, or if the AI request fails |
 
 AI considers the URL, title, and description to classify into Technical, Entertainment, or Other.
@@ -90,7 +104,9 @@ app/                  # Expo Router screens
   bookmark/[id].tsx   # Bookmark detail view
 src/
   services/
-    aiCategorizer.ts  # OpenAI-powered classifier
+    ai/
+      providers.ts    # Multi-provider config (Groq, Gemini, etc.)
+    aiCategorizer.ts  # AI classifier with auto provider detection
     categorizer.ts    # Rules fallback + share processing
     storage.ts        # SQLite persistence
 ```
